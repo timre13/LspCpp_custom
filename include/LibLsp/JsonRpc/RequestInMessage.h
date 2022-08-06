@@ -13,7 +13,7 @@ struct RequestInMessage : public LspMessage {
 	// number or string, actually no null
 	lsRequestId id;
 	std::string method;
-	Kind GetKid() override
+	Kind GetKind() override
 	{
 		return  REQUEST_MESSAGE;
 	}

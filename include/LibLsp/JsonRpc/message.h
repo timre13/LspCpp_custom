@@ -23,11 +23,11 @@ public:
 	enum Kind
 	{
 		REQUEST_MESSAGE,
-		RESPONCE_MESSAGE,
+		RESPONSE_MESSAGE,
 		NOTIFICATION_MESSAGE
 	};
 
-	virtual  Kind GetKid() = 0;
+	virtual  Kind GetKind() = 0;
 	virtual std::string ToJson()  ;
 	
 };

@@ -396,7 +396,7 @@ bool RemoteEndPoint::dispatch(const std::string& content)
 			}
 			else if (isResponseMessage(visitor))
 			{
-				_kind = LspMessage::RESPONCE_MESSAGE;
+				_kind = LspMessage::RESPONSE_MESSAGE;
 				lsRequestId id;
 				ReflectMember(visitor, "id", id);
 
@@ -452,7 +452,7 @@ bool RemoteEndPoint::dispatch(const std::string& content)
 			{
 				info += "request";
 			}
-			if (_kind == LspMessage::RESPONCE_MESSAGE)
+			if (_kind == LspMessage::RESPONSE_MESSAGE)
 			{
 				info += "response";
 			}
@@ -525,7 +525,7 @@ void RemoteEndPoint::mainLoop(std::unique_ptr<LspMessage>msg)
 	{
 		return;
 	}
-	const auto _kind = msg->GetKid();
+	const auto _kind = msg->GetKind();
 	if (_kind == LspMessage::REQUEST_MESSAGE)
 	{
 		auto req = static_cast<RequestInMessage*>(msg.get());
@@ -534,7 +534,7 @@ void RemoteEndPoint::mainLoop(std::unique_ptr<LspMessage>msg)
 		local_endpoint->onRequest(std::move(msg));
 	}
 
-	else if (_kind == LspMessage::RESPONCE_MESSAGE)
+	else if (_kind == LspMessage::RESPONSE_MESSAGE)
 	{
 		const auto id = static_cast<ResponseInMessage*>(msg.get())->id;
 		auto msgInfo = d_ptr->getRequestInfo(id);

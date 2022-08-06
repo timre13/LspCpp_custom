@@ -19,9 +19,9 @@ struct ResponseInMessage :public LspMessage {
 		m_methodType = _type;
 	};
 
-	Kind GetKid() override
+	Kind GetKind() override
 	{
-		return  RESPONCE_MESSAGE;
+		return  RESPONSE_MESSAGE;
 	}
 	virtual  bool IsErrorType()
 	{

@@ -9,7 +9,7 @@
 // NotificationInMessage does not have |id|.
 struct NotificationInMessage : public LspMessage {
 
-	Kind GetKid() override
+	Kind GetKind() override
 	{
 		return  NOTIFICATION_MESSAGE;
 	}
