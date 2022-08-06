@@ -388,7 +388,7 @@ bool RemoteEndPoint::dispatch(const std::string& content)
 					mainLoop(std::move(msg));
 				}
 				else {
-					std::string info = "Unknown support request message when consumer message:\n";
+					std::string info = "Unknown support request message while consuming message:\n";
 					info += content;
 					d_ptr->log.log(Log::Level::WARNING, info);
 					return false;
