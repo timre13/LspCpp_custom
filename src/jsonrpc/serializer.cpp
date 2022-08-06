@@ -104,7 +104,7 @@ void Reflect(Writer& visitor, double& value) {
 
 void Reflect(Reader& visitor, bool& value) {
   if (!visitor.IsBool())
-    throw std::invalid_argument("bool");
+    value = !visitor.IsNull();
   value = visitor.GetBool();
 }
 void Reflect(Writer& visitor, bool& value) {
