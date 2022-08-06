@@ -538,3 +538,5 @@ FodyWeavers.xsd
 
 *.tar.gz
 .DS_Store
+
+build/

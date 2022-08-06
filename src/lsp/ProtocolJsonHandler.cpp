@@ -69,6 +69,7 @@
 #include "LibLsp/lsp/textDocument/didRenameFiles.h"
 #include "LibLsp/lsp/textDocument/semanticHighlighting.h"
 #include "LibLsp/lsp/workspace/configuration.h"
+#include "LibLsp/lsp/workspace/applyEdit.h"
 
 
 void AddStadardResponseJsonRpcMethod(MessageJsonHandler& handler)
@@ -702,6 +703,11 @@ void AddStandardRequestJsonRpcMethod(MessageJsonHandler& handler)
 	handler.method2request[td_willRenameFiles::request::kMethodInfo] = [](Reader& visitor)
 	{
 		return td_willRenameFiles::request::ReflectReader(visitor);
+	};
+
+	handler.method2request[WorkspaceApply::request::kMethodInfo] = [](Reader& visitor)
+	{
+		return WorkspaceApply::request::ReflectReader(visitor);
 	};
 }
 
