@@ -86,10 +86,7 @@ bool lsRange::operator<(const lsRange& o) const {
 
 std::string lsRange::ToString() const
 {
-	std::stringstream ss;
-	ss << "start:" << start.ToString() << std::endl;
-	ss << "end" << end.ToString() << std::endl;
-	return ss.str();
+    return "start=" + start.ToString() + ", end=" + end.ToString();
 }
 
 lsLocation::lsLocation() {}
@@ -111,10 +108,7 @@ bool lsTextEdit::operator==(const lsTextEdit& that) {
 
 std::string lsTextEdit::ToString() const
 {
-	std::stringstream ss;
-	ss << "Range:" << range.ToString() << std::endl;
-	ss << "newText:" << newText << std::endl;
-	return ss.str();
+    return "Range: (" + range.ToString() + "), NexText: \"" + newText + "\"";
 }
 
 void Reflect(Writer& visitor, lsMarkedString& value) {

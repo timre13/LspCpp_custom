@@ -447,22 +447,16 @@ bool RemoteEndPoint::dispatch(const std::string& content)
 		catch (std::exception& e)
 		{
 
-			std::string info = "Exception  when process ";
+			std::string info = "Exception while processing ";
 			if(_kind==LspMessage::REQUEST_MESSAGE)
-			{
 				info += "request";
-			}
-			if (_kind == LspMessage::RESPONSE_MESSAGE)
-			{
+			else if (_kind == LspMessage::RESPONSE_MESSAGE)
 				info += "response";
-			}
 			else
-			{
 				info += "notification";
-			}
 			info += " message:\n";
 			info += e.what();
-			std::string reason = "Reason:" + info + "\n";
+			std::string reason = "Reason: " + info + "\n";
 			reason += "content:\n" + content;
 			d_ptr->log.log(Log::Level::SEVERE, reason);
 			return false;
