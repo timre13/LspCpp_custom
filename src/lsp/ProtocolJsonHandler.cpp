@@ -70,6 +70,7 @@
 #include "LibLsp/lsp/textDocument/semanticHighlighting.h"
 #include "LibLsp/lsp/workspace/configuration.h"
 #include "LibLsp/lsp/workspace/applyEdit.h"
+#include "LibLsp/lsp/general/progress.h"
 
 
 void AddStadardResponseJsonRpcMethod(MessageJsonHandler& handler)
@@ -564,7 +565,6 @@ void AddNotifyJsonRpcMethod(MessageJsonHandler& handler)
 		return Notify_WorkspaceDidChangeConfiguration::notify::ReflectReader(visitor);
 	};
 
-
 	handler.method2notification[Notify_WorkspaceDidChangeWatchedFiles::notify::kMethodInfo] = [](Reader& visitor)
 	{
 		return Notify_WorkspaceDidChangeWatchedFiles::notify::ReflectReader(visitor);
@@ -574,6 +574,12 @@ void AddNotifyJsonRpcMethod(MessageJsonHandler& handler)
 	{
 		return Notify_sendNotification::notify::ReflectReader(visitor);
 	};
+
+	handler.method2notification[Notify_Progress::notify::kMethodInfo] = [](Reader& visitor)
+	{
+		return Notify_Progress::notify::ReflectReader(visitor);
+	};
+
 	handler.method2notification[lang_status::notify::kMethodInfo] = [](Reader& visitor)
 	{
 		return lang_status::notify::ReflectReader(visitor);
