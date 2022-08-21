@@ -10,58 +10,50 @@ bool lsDiagnostic::operator!=(const lsDiagnostic& rhs) const {
 
 std::string lsResponseError::ToString()
 {
-	std::string info = "code:";
+	std::string codeStr;
 	switch (code)
 	{
 	case lsErrorCodes::ParseError:
-		info += "ParseError\n";
+		codeStr = "ParseError";
 		break;
 	case lsErrorCodes::InvalidRequest:
-		info += "InvalidRequest\n";
+		codeStr = "InvalidRequest";
 		break;
 	case lsErrorCodes::MethodNotFound:
-		info += "MethodNotFound\n";
+		codeStr = "MethodNotFound";
 		break;
 	case lsErrorCodes::InvalidParams:
-		info += "InvalidParams\n";
+		codeStr = "InvalidParams";
 		break;
 	case lsErrorCodes::InternalError:
-		info += "InternalError\n";
+		codeStr = "InternalError";
 		break;
 	case lsErrorCodes::serverErrorStart:
-		info += "serverErrorStart\n";
+		codeStr = "serverErrorStart";
 		break;
 	case lsErrorCodes::serverErrorEnd:
-		info += "serverErrorEnd\n";
+		codeStr = "serverErrorEnd";
 		break;
 	case lsErrorCodes::ServerNotInitialized:
-		info += "ServerNotInitialized\n";
+		codeStr = "ServerNotInitialized";
 		break;
 	case lsErrorCodes::UnknownErrorCode:
-		info += "UnknownErrorCode\n";
+		codeStr = "UnknownErrorCode";
 		break;
 		// Defined by the protocol.
 	case lsErrorCodes::RequestCancelled:
-		info += "RequestCancelled\n";
+		codeStr = "RequestCancelled";
 		break;
 	default:
-		{
-			std::stringstream ss;
-			ss << "unknown code:" << (int32_t)code << std::endl;
-			info += ss.str();
-		}
+		codeStr = "Unknown code (" + std::to_string(int(code)) + ')';
 		break;
 	}
-	info += "message:" + message;
-	info += "\n";
+
+	std::string out = codeStr + ": " + this->message;
 
 	if(data.has_value())
-	{
-		
-		info += "data:" + data.value().Data();
-		info += "\n";
-	}
-	return info;
+		out += ", data: " + data.value().Data();
+	return out;
 }
 
 void lsResponseError::Write(Writer& visitor) {
