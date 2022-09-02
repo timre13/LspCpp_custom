@@ -5,20 +5,31 @@
 #include "LibLsp/JsonRpc/lsResponseMessage.h"
 #include "LibLsp/JsonRpc/RequestInMessage.h"
 
+struct ServerInfo {
+	std::string name;
+	boost::optional<std::string> version;
 
-
-
-
+	MAKE_SWAP_METHOD(ServerInfo,name,version);
+};
+MAKE_REFLECT_STRUCT(ServerInfo,name,version);
 
 /**
  * The capabilities the language server provides.
  */
   struct InitializeResult {
     lsServerCapabilities capabilities;
-	MAKE_SWAP_METHOD(InitializeResult, capabilities);
+
+    /**
+     * Information about the server.
+     *
+     * @since 3.15.0
+     */
+    boost::optional<ServerInfo> serverInfo;
+
+	MAKE_SWAP_METHOD(InitializeResult, capabilities, serverInfo);
   };
 
-MAKE_REFLECT_STRUCT(InitializeResult, capabilities);
+MAKE_REFLECT_STRUCT(InitializeResult, capabilities, serverInfo);
 
 
 /**
