@@ -133,15 +133,15 @@ namespace internal
     inline bool is_overlong_sequence(uint32_t cp, octet_difference_type length)
     {
         if (cp < 0x80) {
-            if (length != 1) 
+            if (length != 1)
                 return true;
         }
         else if (cp < 0x800) {
-            if (length != 2) 
+            if (length != 2)
                 return true;
         }
         else if (cp < 0x10000) {
-            if (length != 3) 
+            if (length != 3)
                 return true;
         }
 
@@ -163,7 +163,7 @@ namespace internal
         return UTF8_OK;
     }
 
-    #define UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(IT, END) {utf_error ret = increase_safely(IT, END); if (ret != UTF8_OK) return ret;}    
+    #define UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(IT, END) {utf_error ret = increase_safely(IT, END); if (ret != UTF8_OK) return ret;}
 
     /// get_sequence_x functions decode utf-8 sequences of the length x
     template <typename octet_iterator>
@@ -180,7 +180,7 @@ namespace internal
     template <typename octet_iterator>
     utf_error get_sequence_2(octet_iterator& it, octet_iterator end, uint32_t& code_point)
     {
-        if (it == end) 
+        if (it == end)
             return NOT_ENOUGH_ROOM;
 
         code_point = utf8::internal::mask8(*it);
@@ -197,7 +197,7 @@ namespace internal
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
-            
+
         code_point = utf8::internal::mask8(*it);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
@@ -282,7 +282,7 @@ namespace internal
                 else
                     err = OVERLONG_SEQUENCE;
             }
-            else 
+            else
                 err = INVALID_CODE_POINT;
         }
 
@@ -295,6 +295,55 @@ namespace internal
     inline utf_error validate_next(octet_iterator& it, octet_iterator end) {
         uint32_t ignored;
         return utf8::internal::validate_next(it, end, ignored);
+    }
+
+    // Internal implementation of both checked and unchecked append() function
+    // This function will be invoked by the overloads below, as they will know
+    // the octet_type.
+    template <typename octet_iterator, typename octet_type>
+    octet_iterator append(uint32_t cp, octet_iterator result) {
+        if (cp < 0x80)                        // one octet
+            *(result++) = static_cast<octet_type>(cp);
+        else if (cp < 0x800) {                // two octets
+            *(result++) = static_cast<octet_type>((cp >> 6)          | 0xc0);
+            *(result++) = static_cast<octet_type>((cp & 0x3f)        | 0x80);
+        }
+        else if (cp < 0x10000) {              // three octets
+            *(result++) = static_cast<octet_type>((cp >> 12)         | 0xe0);
+            *(result++) = static_cast<octet_type>(((cp >> 6) & 0x3f) | 0x80);
+            *(result++) = static_cast<octet_type>((cp & 0x3f)        | 0x80);
+        }
+        else {                                // four octets
+            *(result++) = static_cast<octet_type>((cp >> 18)         | 0xf0);
+            *(result++) = static_cast<octet_type>(((cp >> 12) & 0x3f)| 0x80);
+            *(result++) = static_cast<octet_type>(((cp >> 6) & 0x3f) | 0x80);
+            *(result++) = static_cast<octet_type>((cp & 0x3f)        | 0x80);
+        }
+        return result;
+    }
+
+    // One of the following overloads will be invoked from the API calls
+
+    // A simple (but dangerous) case: the caller appends byte(s) to a char array
+    inline char* append(uint32_t cp, char* result) {
+        return append<char*, char>(cp, result);
+    }
+
+    // Hopefully, most common case: the caller uses back_inserter
+    // i.e. append(cp, std::back_inserter(str));
+    template<typename container_type>
+    std::back_insert_iterator<container_type> append
+            (uint32_t cp, std::back_insert_iterator<container_type> result) {
+        return append<std::back_insert_iterator<container_type>,
+            typename container_type::value_type>(cp, result);
+    }
+
+    // The caller uses some other kind of output operator - not covered above
+    // Note that in this case we are not able to determine octet_type
+    // so we assume it's uint_8; that can cause a conversion warning if we are wrong.
+    template <typename octet_iterator>
+    octet_iterator append(uint32_t cp, octet_iterator result) {
+        return append<octet_iterator, uint8_t>(cp, result);
     }
 
 } // namespace internal
@@ -330,7 +379,7 @@ namespace internal
             ((it != end) && (utf8::internal::mask8(*it++)) == bom[1]) &&
             ((it != end) && (utf8::internal::mask8(*it))   == bom[2])
            );
-    }	
+    }
 } // namespace utf8
 
 #endif // header guard

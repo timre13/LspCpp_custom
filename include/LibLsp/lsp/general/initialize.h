@@ -6,10 +6,10 @@
 #include "LibLsp/JsonRpc/RequestInMessage.h"
 
 struct ServerInfo {
-	std::string name;
-	boost::optional<std::string> version;
+    std::string name;
+    boost::optional<std::string> version;
 
-	MAKE_SWAP_METHOD(ServerInfo,name,version);
+    MAKE_SWAP_METHOD(ServerInfo,name,version);
 };
 MAKE_REFLECT_STRUCT(ServerInfo,name,version);
 
@@ -37,7 +37,7 @@ MAKE_REFLECT_STRUCT(InitializeResult, capabilities, serverInfo);
  * the server.
  *
  * If the server receives request or notification before the initialize request it should act as follows:
- * 	- for a request the respond should be errored with code: -32001. The message can be picked by the server.
+ *      - for a request the respond should be errored with code: -32001. The message can be picked by the server.
  *  - notifications should be dropped, except for the exit notification. This will allow the exit a server without an initialize request.
  *
  * Until the server has responded to the initialize request with an InitializeResult

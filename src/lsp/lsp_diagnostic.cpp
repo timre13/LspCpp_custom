@@ -10,58 +10,66 @@ bool lsDiagnostic::operator!=(const lsDiagnostic& rhs) const {
 
 std::string lsResponseError::ToString()
 {
-	std::string codeStr;
-	switch (code)
-	{
-	case lsErrorCodes::ParseError:
-		codeStr = "ParseError";
-		break;
-	case lsErrorCodes::InvalidRequest:
-		codeStr = "InvalidRequest";
-		break;
-	case lsErrorCodes::MethodNotFound:
-		codeStr = "MethodNotFound";
-		break;
-	case lsErrorCodes::InvalidParams:
-		codeStr = "InvalidParams";
-		break;
-	case lsErrorCodes::InternalError:
-		codeStr = "InternalError";
-		break;
-	case lsErrorCodes::serverErrorStart:
-		codeStr = "serverErrorStart";
-		break;
-	case lsErrorCodes::serverErrorEnd:
-		codeStr = "serverErrorEnd";
-		break;
-	case lsErrorCodes::ServerNotInitialized:
-		codeStr = "ServerNotInitialized";
-		break;
-	case lsErrorCodes::UnknownErrorCode:
-		codeStr = "UnknownErrorCode";
-		break;
-		// Defined by the protocol.
-	case lsErrorCodes::RequestCancelled:
-		codeStr = "RequestCancelled";
-		break;
-	default:
-		codeStr = "Unknown code (" + std::to_string(int(code)) + ')';
-		break;
-	}
+        std::string info = "code:";
+        switch (code)
+        {
+        case lsErrorCodes::ParseError:
+                info += "ParseError\n";
+                break;
+        case lsErrorCodes::InvalidRequest:
+                info += "InvalidRequest\n";
+                break;
+        case lsErrorCodes::MethodNotFound:
+                info += "MethodNotFound\n";
+                break;
+        case lsErrorCodes::InvalidParams:
+                info += "InvalidParams\n";
+                break;
+        case lsErrorCodes::InternalError:
+                info += "InternalError\n";
+                break;
+        case lsErrorCodes::serverErrorStart:
+                info += "serverErrorStart\n";
+                break;
+        case lsErrorCodes::serverErrorEnd:
+                info += "serverErrorEnd\n";
+                break;
+        case lsErrorCodes::ServerNotInitialized:
+                info += "ServerNotInitialized\n";
+                break;
+        case lsErrorCodes::UnknownErrorCode:
+                info += "UnknownErrorCode\n";
+                break;
+                // Defined by the protocol.
+        case lsErrorCodes::RequestCancelled:
+                info += "RequestCancelled\n";
+                break;
+        default:
+                {
+                        std::stringstream ss;
+                        ss << "unknown code:" << (int32_t)code << std::endl;
+                        info += ss.str();
+                }
+                break;
+        }
+        info += "message:" + message;
+        info += "\n";
 
-	std::string out = codeStr + ": " + this->message;
+        if(data.has_value())
+        {
 
-	if(data.has_value())
-		out += ", data: " + data.value().Data();
-	return out;
+                info += "data:" + data.value().Data();
+                info += "\n";
+        }
+        return info;
 }
 
 void lsResponseError::Write(Writer& visitor) {
-	auto& value = *this;
-	int code2 = static_cast<int>(this->code);
+        auto& value = *this;
+        int code2 = static_cast<int>(this->code);
 
-	visitor.StartObject();
-	REFLECT_MEMBER2("code", code2);
-	REFLECT_MEMBER(message);
-	visitor.EndObject();
+        visitor.StartObject();
+        REFLECT_MEMBER2("code", code2);
+        REFLECT_MEMBER(message);
+        visitor.EndObject();
 }

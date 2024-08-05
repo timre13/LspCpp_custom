@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 // Since Travis CI installs old Valgrind 3.7.0, which fails with some SSE4.2
@@ -49,10 +49,12 @@ using namespace rapidjson_simd;
 #define SIMD_SUFFIX(name) name
 #endif
 
+#define SIMD_SIZE_ALIGN(n) ((size_t(n) + 15) & ~size_t(15))
+
 template <typename StreamType>
 void TestSkipWhitespace() {
     for (size_t step = 1; step < 32; step++) {
-        char buffer[1025];
+        char buffer[SIMD_SIZE_ALIGN(1025)];
         for (size_t i = 0; i < 1024; i++)
             buffer[i] = " \t\r\n"[i % 4];
         for (size_t i = 0; i < 1024; i += step)
@@ -79,7 +81,7 @@ TEST(SIMD, SIMD_SUFFIX(SkipWhitespace)) {
 
 TEST(SIMD, SIMD_SUFFIX(SkipWhitespace_EncodedMemoryStream)) {
     for (size_t step = 1; step < 32; step++) {
-        char buffer[1024];
+        char buffer[SIMD_SIZE_ALIGN(1024)];
         for (size_t i = 0; i < 1024; i++)
             buffer[i] = " \t\r\n"[i % 4];
         for (size_t i = 0; i < 1024; i += step)
@@ -87,14 +89,12 @@ TEST(SIMD, SIMD_SUFFIX(SkipWhitespace_EncodedMemoryStream)) {
 
         MemoryStream ms(buffer, 1024);
         EncodedInputStream<UTF8<>, MemoryStream> s(ms);
-        size_t i = 0;
         for (;;) {
             SkipWhitespace(s);
             if (s.Peek() == '\0')
                 break;
             //EXPECT_EQ(i, s.Tell());
             EXPECT_EQ('X', s.Take());
-            i += step;
         }
     }
 }
@@ -109,8 +109,8 @@ struct ScanCopyUnescapedStringHandler : BaseReaderHandler<UTF8<>, ScanCopyUnesca
 
 template <unsigned parseFlags, typename StreamType>
 void TestScanCopyUnescapedString() {
-    char buffer[1024u + 5 + 32];
-    char backup[1024u + 5 + 32];
+    char buffer[SIMD_SIZE_ALIGN(1024u + 5 + 32)];
+    char backup[SIMD_SIZE_ALIGN(1024u + 5 + 32)];
 
     // Test "ABCDABCD...\\"
     for (size_t offset = 0; offset < 32; offset++) {
@@ -167,7 +167,7 @@ TEST(SIMD, SIMD_SUFFIX(ScanCopyUnescapedString)) {
 }
 
 TEST(SIMD, SIMD_SUFFIX(ScanWriteUnescapedString)) {
-    char buffer[2048 + 1 + 32];
+    char buffer[SIMD_SIZE_ALIGN(2048 + 1 + 32)];
     for (size_t offset = 0; offset < 32; offset++) {
         for (size_t step = 0; step < 1024; step++) {
             char* s = buffer + offset;
