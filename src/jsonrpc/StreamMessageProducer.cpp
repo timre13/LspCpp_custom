@@ -103,7 +103,7 @@ void LSPStreamMessageProducer::listen(MessageConsumer callBack)
                             if (headers.contentLength <= 0)
                             {
                                     string info = "Unexpected token:" + debugBuilder;
-                                    info = +"  (expected Content-Length: sequence);";
+                                    info += "  (expected Content-Length: sequence);";
                                      MessageIssue issue(info, lsp::Log::Level::WARNING);
                                      issueHandler.handle(std::move(issue));
                             }
