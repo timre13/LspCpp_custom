@@ -49,6 +49,7 @@
 #include "LibLsp/lsp/extention/jdtls/getMoveDestinations.h"
 #include "LibLsp/lsp/extention/jdtls/Move.h"
 #include "LibLsp/lsp/extention/jdtls/organizeImports.h"
+#include "LibLsp/lsp/extention/clangd/fileStatus.h"
 #include "LibLsp/lsp/general/exit.h"
 #include "LibLsp/lsp/general/initialized.h"
 #include "LibLsp/lsp/extention/jdtls/projectConfigurationUpdate.h"
@@ -597,6 +598,11 @@ void AddNotifyJsonRpcMethod(MessageJsonHandler& handler)
         handler.method2notification[lang_eventNotification::notify::kMethodInfo] = [](Reader& visitor)
         {
                 return lang_eventNotification::notify::ReflectReader(visitor);
+        };
+
+        handler.method2notification[Notify_ClangdFileStatus::notify::kMethodInfo] = [](Reader& visitor)
+        {
+                return Notify_ClangdFileStatus::notify::ReflectReader(visitor);
         };
 }
 
