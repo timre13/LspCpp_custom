@@ -72,6 +72,8 @@
 #include "LibLsp/lsp/workspace/applyEdit.h"
 #include "LibLsp/lsp/general/progress.h"
 
+#include "LibLsp/lsp/window/workDoneProgressCreate.h"
+
 
 void AddStadardResponseJsonRpcMethod(MessageJsonHandler& handler)
 {
@@ -714,6 +716,11 @@ void AddStandardRequestJsonRpcMethod(MessageJsonHandler& handler)
 	handler.method2request[WorkspaceApply::request::kMethodInfo] = [](Reader& visitor)
 	{
 		return WorkspaceApply::request::ReflectReader(visitor);
+        };
+
+        handler.method2request[window_workDoneProgressCreate::request::kMethodInfo] = [](Reader& visitor)
+        {
+                return window_workDoneProgressCreate::request::ReflectReader(visitor);
         };
 }
 
