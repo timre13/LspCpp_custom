@@ -16,7 +16,7 @@ extern  void Reflect(Reader& visitor,
 struct lsParameterInformation {
   // The label of this parameter. Will be shown in
   // the UI.
-  std::string label;
+    std::pair<optional<std::string>, optional<std::array<uint, 2>>> label;
 
   // The human-readable doc-comment of this parameter. Will be shown
   // in the UI but can be omitted.
