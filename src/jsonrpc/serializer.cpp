@@ -186,6 +186,17 @@ void JsonReader::IterMap(std::function<void(const char*, Reader&)> fn)
         path_.pop_back();
 }
 
+ size_t JsonReader::GetArraySize()
+{
+        if (!m_->IsArray())
+                throw std::invalid_argument("array");
+        // Use "0" to indicate any element for now.
+        path_.push_back("0");
+        const size_t result = m_->Size();
+        path_.pop_back();
+        return result;
+}
+
 void JsonReader::DoMember(const char* name, std::function<void(Reader&)> fn)
 {
         path_.push_back(name);

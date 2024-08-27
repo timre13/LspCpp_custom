@@ -10,6 +10,7 @@
 #include <functional>
 #include <map>
 #include <algorithm>
+#include <array>
 
 #include "optionalVersion.h"
 
@@ -53,6 +54,7 @@ public:
         virtual std::unique_ptr<Reader> operator[](const char* x) = 0;
         virtual void IterMap( std::function<void(const char*, Reader&)> fn) = 0;
         virtual void IterArray(std::function<void(Reader&)> fn) = 0;
+        virtual size_t GetArraySize() = 0;
         virtual void DoMember(const char* name, std::function<void(Reader&)> fn) = 0;
         virtual std::string ToString() const = 0;
 };
@@ -282,6 +284,28 @@ void Reflect(Reader& visitor, std::vector<T>& values) {
 
 template <typename T>
 void Reflect(Writer& visitor, std::vector<T>& values) {
+        visitor.StartArray(values.size());
+        for (auto& value : values)
+                Reflect(visitor, value);
+        visitor.EndArray();
+}
+
+// std::array
+template <typename T, size_t TSize>
+void Reflect(Reader& visitor, std::array<T, TSize>& values) {
+        if (visitor.GetArraySize() != TSize)
+            throw std::invalid_argument{"Bad array length"};
+        size_t i{};
+        visitor.IterArray([&](Reader& entry) {
+            T entry_value;
+            Reflect(entry, entry_value);
+            values[i] = std::move(entry_value);
+            ++i;
+        });
+}
+
+template <typename T, size_t TSize>
+void Reflect(Writer& visitor, std::array<T, TSize>& values) {
         visitor.StartArray(values.size());
         for (auto& value : values)
                 Reflect(visitor, value);

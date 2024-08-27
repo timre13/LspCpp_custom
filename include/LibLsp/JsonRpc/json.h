@@ -51,6 +51,8 @@ class JsonReader : public Reader {
 
   void IterArray(std::function<void(Reader&)> fn) override;
 
+  size_t GetArraySize() override;
+
   void DoMember(const char* name, std::function<void(Reader&)> fn) override;
 
   std::string GetPath() const;
