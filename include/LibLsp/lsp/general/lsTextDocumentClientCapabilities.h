@@ -189,17 +189,25 @@ struct CompletionItemCapabilities {
          //
         optional<bool> preselectSupport;
 
+        // The client has support for completion item label
+        // details (see also `CompletionItemLabelDetails`).
+        optional<bool> labelDetailsSupport;
+
         MAKE_SWAP_METHOD(CompletionItemCapabilities,
                 snippetSupport,
                 commitCharactersSupport,
                 documentationFormat,
-                deprecatedSupport, preselectSupport);
+                deprecatedSupport,
+                preselectSupport,
+                labelDetailsSupport);
 };
 MAKE_REFLECT_STRUCT(CompletionItemCapabilities,
         snippetSupport,
         commitCharactersSupport,
         documentationFormat,
-        deprecatedSupport, preselectSupport);
+        deprecatedSupport,
+        preselectSupport,
+        labelDetailsSupport);
 
 
 //

@@ -60,6 +60,33 @@ namespace lsp
         std::string ToString(lsCompletionItemKind);
         std::string ToString(lsInsertTextFormat);
 }
+
+/**
+ * Additional details for a completion item label.
+ *
+ * @since 3.17.0
+ */
+struct CompletionItemLabelDetails
+{
+    // An optional string which is rendered less prominently directly after
+    // {@link CompletionItem.label label}, without any spacing. Should be
+    // used for function signatures or type annotations.
+    optional<std::string> detail;
+
+    // An optional string which is rendered less prominently after
+    // {@link CompletionItemLabelDetails.detail}. Should be used for fully qualified
+    // names or file path.
+    optional<std::string> description;
+
+  MAKE_SWAP_METHOD(CompletionItemLabelDetails,
+          detail,
+          description);
+};
+
+MAKE_REFLECT_STRUCT(CompletionItemLabelDetails,
+        detail,
+        description);
+
 /**
  * The Completion request is sent from the client to the server to compute completion items at a given cursor position.
  * Completion items are presented in the IntelliSense user class. If computing complete completion items is expensive
@@ -72,6 +99,9 @@ struct lsCompletionItem {
   // also the text that is inserted when selecting
   // this completion.
   std::string label;
+
+  // Additional details for the label
+  optional<CompletionItemLabelDetails> labelDetails;
 
   // The kind of this completion item. Based of the kind
   // an icon is chosen by the editor.
@@ -178,6 +208,7 @@ struct lsCompletionItem {
   std::string ToString();
   MAKE_SWAP_METHOD(lsCompletionItem,
           label,
+          labelDetails,
           kind,
           detail,
           documentation,
@@ -195,6 +226,7 @@ struct lsCompletionItem {
 
 MAKE_REFLECT_STRUCT(lsCompletionItem,
                     label,
+                    labelDetails,
                     kind,
                     detail,
                     documentation,
